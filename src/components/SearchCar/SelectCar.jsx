@@ -1,16 +1,23 @@
 import axios from 'axios';
-import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, Card, Col, Row, Button, Form, Container } from 'reactstrap';
+import { Navbar, NavbarBrand, NavbarToggler, Collapse, Nav, Card, Col, Row, Form, Container } from 'reactstrap';
 import React, { useEffect, useRef, useState } from "react";
 import { Navigate } from 'react-router-dom';
+import { addUser } from '../../slices/userSlice';
+import { useDispatch } from "react-redux";
+
 
 
 const SelectCarMenu = () => {
+    const dispatch = useDispatch();
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [user, setUser] = useState({});
     const [cars, setCars] = useState([]);
     const capacityField = useRef();
     const isWithDriverField = useRef();
-    const availableAtField = useRef();
+    const availableAtDateField = useRef();
+    const availableAtTimeField = useRef();
+
+
 
     useEffect(() => {
 
@@ -33,7 +40,14 @@ const SelectCarMenu = () => {
                 const currentUserResponse = currentUserRequest.data;
 
                 if (currentUserResponse.status) {
-                    setUser(currentUserResponse.data.user);
+                    dispatch(
+                        addUser({
+                            user: currentUserResponse.data.user,
+                            token: token,
+                        })
+                    )
+
+                        setUser(currentUserResponse.data.user);
                 }
             } catch (err) {
                 setIsLoggedIn(false);
@@ -54,7 +68,9 @@ const SelectCarMenu = () => {
         e.preventDefault();
         try {
 
-            const dataCars = await axios.get(`http://localhost:3500/cars/filtered?isWithDriver=${isWithDriverField.current.value}&capacity=${capacityField.current.value}&availableAt=${availableAtField.current.value}`)
+            const dateTime = new Date(`${availableAtDateField.current.value} ${availableAtTimeField.current.value}`)
+
+            const dataCars = await axios.get(`http://localhost:3500/cars/filtered?isWithDriver=${isWithDriverField.current.value}&capacity=${capacityField.current.value}&availableAt=${dateTime.toISOString()}`)
 
             const payloadData = await dataCars.data.data.filteredCars;
             console.log(dataCars);
@@ -146,14 +162,14 @@ const SelectCarMenu = () => {
                                         <div className="col-md-3 tengah mt-15">
                                             <div className=" form-group">
                                                 <label className="form-label">Tanggal</label>
-                                                <input ref={availableAtField} type="date" className="form-control" />
+                                                <input ref={availableAtDateField} type="date" className="form-control" />
                                             </div>
                                         </div>
 
                                         <div className="col-md-3 tengah mt-15">
                                             <div className="form-group ">
                                                 <label className="form-label">Waktu Jemput/Ambil</label>
-                                                <select id="inputTime" className="form-select">
+                                                <select id="inputTime" className="form-select" ref={availableAtTimeField}>
                                                     <option selected hidden>Waktu Jemput</option>
                                                     <option value="08:00">08:00 WIB</option>
                                                     <option value="09:00">09:00 WIB</option>
@@ -207,15 +223,15 @@ const SelectCarMenu = () => {
                                     </h5>
                                     <p className="card-text">{car.description}</p>
                                     <div className="">
-                                
+
                                         {car.capacity} Orang
                                     </div>
                                     <div className="pt-2">
-                                        
+
                                         {car.transmission}
                                     </div>
                                     <div className="pt-2">
-                                        
+
                                         Tahun {car.year}
                                     </div>
                                     <button className="btn-success w-100 mt-3"> Pilih Mobil</button>

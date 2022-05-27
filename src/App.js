@@ -7,18 +7,23 @@ import SelectCarMenu from './components/SearchCar/SelectCar';
 import Login from './components/login';
 import Register from './components/Register/Register'
 import './App.css'
+import { Provider } from 'react-redux';
+import { store } from '../src/app/store';
+
 
 
 
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path='/' element={<Landing/>} />
-        <Route path='/cariMobil' element={<SelectCarMenu/>} /> 
-        <Route path='/login' element={<Login/>} />
-        <Route path='/register' element={<Register/>} />
-      </Routes>
+      <Provider store={store}>
+        <Routes>
+          <Route path='/' element={<Landing/>} />
+          <Route path='/cariMobil' element={<SelectCarMenu/>} /> 
+          <Route path='/login' element={<Login/>} />
+          <Route path='/register' element={<Register/>} />
+        </Routes>
+      </Provider>
     
     </div>
   );

@@ -8,7 +8,10 @@ import WanitaMenu from './Wanita';
 import TestimoniMenu from './Testimoni';
 
 
+
 function Landing() {
+   
+
     return (
       <div>
             <NavbarMenu />
